@@ -144,6 +144,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getPlayerIdx",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "bytes32",
@@ -341,11 +354,11 @@
 			]
 		},
 		"RWAPSSF.sol": {
-			"keccak256": "0x95719543126e74d79f9a4a313885fe9254b20bc6dbc17c1f2512569c4dac1e24",
+			"keccak256": "0x6b0b6ec8ecaa980296afa677f024d7a4bf2cdcb6b56604b688274746ee9da81e",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://7873981f7700f93c8a10c3df56ac8368df386d784ded10f74566000708da37cb",
-				"dweb:/ipfs/QmZBGa8NG2sLdbdVQuLML2ez2fEHM523BNm3NmmtRmys3v"
+				"bzz-raw://734c92e4c4bf29d9affcf03a5f63df6a26d90c70d2ae4cc5edc448aa8baede75",
+				"dweb:/ipfs/QmY6Yi1jBpVx698jhh7a9Gftx4C5NAgfKKckLLQ5LG65Ca"
 			]
 		}
 	},

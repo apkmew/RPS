@@ -25,6 +25,24 @@ contract RWAPSSF is CommitReveal {
         return keccak256( abi.encodePacked( choice, encodeSalt ) );
     }
 
+    function getPlayerIdx() public view returns ( uint ) {
+        require( numPlayer > 0 );
+        if( numPlayer == 1 ){
+            require( msg.sender == player[0].addr );
+            return 0;
+        }
+        else if( numPlayer == 2 ){
+            require( msg.sender == player[0].addr || msg.sender == player[1].addr );
+            if( msg.sender == player[0].addr ){
+                return 0;
+            }
+            else if( msg.sender == player[1].addr ){
+                return 1; 
+            }
+        }
+        revert("Invalid state");
+    }
+
     function addPlayer() public payable {
         require(numPlayer < 2);
         require(msg.value == 1 ether);
