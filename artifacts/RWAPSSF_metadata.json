@@ -341,11 +341,11 @@
 			]
 		},
 		"RWAPSSF.sol": {
-			"keccak256": "0x229f274ec844e8bb494f8929839945b155f35c9c78e8829b49f954b453e80172",
+			"keccak256": "0x95719543126e74d79f9a4a313885fe9254b20bc6dbc17c1f2512569c4dac1e24",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://a72117355edca331445794ab070eba07d31d8bc2a897d6206733bf2837de1d74",
-				"dweb:/ipfs/QmR91yJKJvPJyw2rCQgZHaAr2vBePCKA8YUFtTZWuDbgTv"
+				"bzz-raw://7873981f7700f93c8a10c3df56ac8368df386d784ded10f74566000708da37cb",
+				"dweb:/ipfs/QmZBGa8NG2sLdbdVQuLML2ez2fEHM523BNm3NmmtRmys3v"
 			]
 		}
 	},
