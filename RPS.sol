@@ -9,11 +9,15 @@ contract RPS is CommitReveal {
         uint choice; // 0 - Rock, 1 - Paper , 2 - Scissors, 3 - undefined
         address addr;
     }
+
+    mapping (uint => Player) public player;
     uint public numPlayer = 0;
     uint public reward = 0;
-    mapping (uint => Player) public player;
     uint public numInput = 0;
     uint public numHashedInput = 0;
+    
+    uint public latestActionTime = block.timestamp;
+    uint public constant IDLE_TIME = 5 minutes;
 
     // Let player call this function first before call input
     function getHashChoice( uint choice, string memory salt ) external pure returns ( bytes32 ) {
@@ -28,6 +32,7 @@ contract RPS is CommitReveal {
         player[numPlayer].addr = msg.sender;
         player[numPlayer].choice = 3;
         numPlayer++;
+        latestActionTime = block.timestamp;
     }
 
     function inputHashChoice( bytes32 hashedChoice, uint idx ) public {
@@ -35,6 +40,7 @@ contract RPS is CommitReveal {
         require( msg.sender == player[idx].addr );
         commit( getHash( hashedChoice ) );
         numHashedInput++;
+        latestActionTime = block.timestamp;
     }
 
     function input(uint choice, string memory salt, uint idx) public  {
@@ -45,6 +51,7 @@ contract RPS is CommitReveal {
         reveal( keccak256( abi.encodePacked( choice, encodeSalt ) ) );
         player[idx].choice = choice;
         numInput++;
+        latestActionTime = block.timestamp;
         if (numInput == 2) {
             _checkWinnerAndPay();
         }
@@ -68,5 +75,65 @@ contract RPS is CommitReveal {
             account0.transfer(reward / 2);
             account1.transfer(reward / 2);
         }
+        _resetGame();
+    }
+
+    function _resetGame() private {
+        numPlayer = 0;
+        reward = 0;
+        numInput = 0;
+        numHashedInput = 0;
+        
+        player[0].choice = 3;
+        player[0].addr = address(0);
+
+        player[1].choice = 3;
+        player[1].addr = address(0);
+    }
+
+    function refund() public {
+        
+        require( block.timestamp - latestActionTime > IDLE_TIME ); // Check Idle Time
+        require( numPlayer > 0 );  // Check have player
+        
+        // Case no other player
+        if( numPlayer == 1 ) {
+            require( msg.sender == player[0].addr ); // Check player want to refund by themselves
+            address payable account = payable( player[0].addr );
+            account.transfer( reward );
+            _resetGame();
+        }
+        else if( numPlayer == 2 ){
+            require( msg.sender == player[0].addr || msg.sender == player[1].addr ); // Check player want to refund by themselves
+
+            // Case no one choose choice
+            if( numInput == 0 ){
+                // Refund both player
+                address payable account0 = payable( player[0].addr );
+                address payable account1 = payable( player[1].addr );
+                account0.transfer( reward / 2 );
+                account1.transfer( reward / 2 );
+                _resetGame();
+            }
+
+            // Case have a player not revealed their choice
+            else if( numInput == 1 ){
+
+                // Case player 0 not revealed their choice
+                if( player[0].choice == 3 ){
+                    // Punish player 0 by disqualify player 0
+                    address payable account = payable( player[1].addr );
+                    account.transfer( reward );
+                }
+                // Case player 1 not revealed their choice
+                else if( player[1].choice == 3 ){
+                    // Punish player 1 by disqualify plyer 1
+                    address payable account = payable( player[0].addr );
+                    account.transfer( reward );
+                }
+                _resetGame();
+            }
+        }
+
     }
 }
