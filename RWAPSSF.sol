@@ -69,10 +69,11 @@ contract RWAPSSF is CommitReveal {
         require(msg.sender == player[idx].addr);
         require(choice1 >= 0 && choice1 <= 6);
         require(choice2 >= 0 && choice2 <= 6);
-        bytes32 encodeChoice = bytes32( abi.encodePacked( choice1, choice2 ); )
+        bytes32 encodeChoice = bytes32( abi.encodePacked( choice1, choice2 ) );
         bytes32 encodeSalt = bytes32( abi.encodePacked( salt ) );
         reveal( keccak256( abi.encodePacked( encodeChoice, encodeSalt ) ) );
-        player[idx].choice = choice;
+        player[idx].choice1 = choice1;
+        player[idx].choice2 = choice2;
         numInput++;
         latestActionTime = block.timestamp;
         if (numInput == 2) {
@@ -81,10 +82,10 @@ contract RWAPSSF is CommitReveal {
     }
 
     function _checkWinnerAndPay() private {
-        uint p0Choice1 = player[0].Choice1;
-        uint p0Choice2 = player[0].Choice2;
-        uint p1Choice1 = player[1].Choice1;
-        uint p1Choice2 = player[1].Choice2;
+        uint p0Choice1 = player[0].choice1;
+        uint p0Choice2 = player[0].choice2;
+        uint p1Choice1 = player[1].choice1;
+        uint p1Choice2 = player[1].choice2;
         uint p0Point = 0;
         uint p1Point = 0;
         address payable account0 = payable(player[0].addr);
@@ -166,13 +167,13 @@ contract RWAPSSF is CommitReveal {
             else if( numInput == 1 ){
 
                 // Case player 0 not revealed their choice
-                if( player[0].choice == 7 ){
+                if( player[0].choice1 == 7 ){
                     // Punish player 0 by disqualify player 0
                     address payable account = payable( player[1].addr );
                     account.transfer( reward );
                 }
                 // Case player 1 not revealed their choice
-                else if( player[1].choice == 7 ){
+                else if( player[1].choice1 == 7 ){
                     // Punish player 1 by disqualify plyer 1
                     address payable account = payable( player[0].addr );
                     account.transfer( reward );

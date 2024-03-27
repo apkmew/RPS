@@ -123,7 +123,12 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "choice",
+						"name": "choice1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "choice2",
 						"type": "uint256"
 					},
 					{
@@ -184,7 +189,12 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "choice",
+						"name": "choice1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "choice2",
 						"type": "uint256"
 					},
 					{
@@ -285,7 +295,12 @@
 				"outputs": [
 					{
 						"internalType": "uint256",
-						"name": "choice",
+						"name": "choice1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "choice2",
 						"type": "uint256"
 					},
 					{
@@ -354,11 +369,11 @@
 			]
 		},
 		"RWAPSSF.sol": {
-			"keccak256": "0x6b0b6ec8ecaa980296afa677f024d7a4bf2cdcb6b56604b688274746ee9da81e",
+			"keccak256": "0x2ab84265689d8af88fe13db8c9e4cf589a3877bfb3da4a094ffe52c0e7087cd3",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://734c92e4c4bf29d9affcf03a5f63df6a26d90c70d2ae4cc5edc448aa8baede75",
-				"dweb:/ipfs/QmY6Yi1jBpVx698jhh7a9Gftx4C5NAgfKKckLLQ5LG65Ca"
+				"bzz-raw://1c5d0d64b2bca869603a0e86ea775caca39fee7861728154d88b70271a43b78c",
+				"dweb:/ipfs/QmekGjv8qHz6PQrdkK7hRNp6rcuFY9ZKCZ6vfrxL9ad6Yk"
 			]
 		}
 	},
