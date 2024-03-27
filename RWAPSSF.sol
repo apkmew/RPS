@@ -6,7 +6,8 @@ import "./CommitReveal.sol";
 
 contract RWAPSSF is CommitReveal {
     struct Player {
-        uint choice; // 0 - Rock, 1 - Fire , 2 - Scissors, 3 - Sponge, 4 - Paper, 5 - Air, 6 - Water, 7 - undefined
+        uint choice1; // 0 - Rock, 1 - Fire , 2 - Scissors, 3 - Sponge, 4 - Paper, 5 - Air, 6 - Water, 7 - undefined
+        uint choice2;
         address addr;
     }
 
@@ -20,9 +21,10 @@ contract RWAPSSF is CommitReveal {
     uint public constant IDLE_TIME = 5 minutes;
 
     // Let player call this function first before call input
-    function getHashChoice( uint choice, string memory salt ) external pure returns ( bytes32 ) {
+    function getHashChoice( uint choice1, uint choice2, string memory salt ) external pure returns ( bytes32 ) {
+        bytes32 encodeChoice = bytes32( abi.encodePacked( choice1, choice2 ) );
         bytes32 encodeSalt = bytes32( abi.encodePacked( salt ) );
-        return keccak256( abi.encodePacked( choice, encodeSalt ) );
+        return keccak256( abi.encodePacked( encodeChoice, encodeSalt ) );
     }
 
     function getPlayerIdx() public view returns ( uint ) {
@@ -48,7 +50,8 @@ contract RWAPSSF is CommitReveal {
         require(msg.value == 1 ether);
         reward += msg.value;
         player[numPlayer].addr = msg.sender;
-        player[numPlayer].choice = 7;
+        player[numPlayer].choice1 = 7;
+        player[numPlayer].choice2 = 7;
         numPlayer++;
         latestActionTime = block.timestamp;
     }
@@ -61,12 +64,14 @@ contract RWAPSSF is CommitReveal {
         latestActionTime = block.timestamp;
     }
 
-    function input(uint choice, string memory salt, uint idx) public  {
+    function input(uint choice1, uint choice2, string memory salt, uint idx) public  {
         require(numPlayer == 2);
         require(msg.sender == player[idx].addr);
-        require(choice >= 0 && choice <= 6);
+        require(choice1 >= 0 && choice1 <= 6);
+        require(choice2 >= 0 && choice2 <= 6);
+        bytes32 encodeChoice = bytes32( abi.encodePacked( choice1, choice2 ); )
         bytes32 encodeSalt = bytes32( abi.encodePacked( salt ) );
-        reveal( keccak256( abi.encodePacked( choice, encodeSalt ) ) );
+        reveal( keccak256( abi.encodePacked( encodeChoice, encodeSalt ) ) );
         player[idx].choice = choice;
         numInput++;
         latestActionTime = block.timestamp;
@@ -76,20 +81,41 @@ contract RWAPSSF is CommitReveal {
     }
 
     function _checkWinnerAndPay() private {
-        uint p0Choice = player[0].choice;
-        uint p1Choice = player[1].choice;
+        uint p0Choice1 = player[0].Choice1;
+        uint p0Choice2 = player[0].Choice2;
+        uint p1Choice1 = player[1].Choice1;
+        uint p1Choice2 = player[1].Choice2;
+        uint p0Point = 0;
+        uint p1Point = 0;
         address payable account0 = payable(player[0].addr);
         address payable account1 = payable(player[1].addr);
-        if ( (p0Choice + 1) % 7 == p1Choice || (p0Choice + 2) % 7 == p1Choice || (p0Choice + 3) % 7 == p1Choice ) {
-            // to pay player[0]
-            account0.transfer(reward);
+        if ( (p0Choice1 + 1) % 7 == p1Choice1 || (p0Choice1 + 2) % 7 == p1Choice1 || (p0Choice1 + 3) % 7 == p1Choice1 ) {
+            p0Point += 2;
         }
-        else if ( (p1Choice + 1) % 7 == p0Choice || (p1Choice + 2) % 7 == p0Choice || (p1Choice + 3) % 7 == p0Choice ) {
-            // to pay player[1]
-            account1.transfer(reward);    
+        else if ( (p1Choice1 + 1) % 7 == p0Choice1 || (p1Choice1 + 2) % 7 == p0Choice1 || (p1Choice1 + 3) % 7 == p0Choice1 ) {
+            p1Point += 2;  
         }
         else {
-            // to split reward
+            p0Point++;
+            p1Point++;
+        }
+        if ( (p0Choice2 + 1) % 7 == p1Choice2 || (p0Choice2 + 2) % 7 == p1Choice2 || (p0Choice2 + 3) % 7 == p1Choice2 ) {
+            p0Point += 2;
+        }
+        else if ( (p1Choice2 + 1) % 7 == p0Choice2 || (p1Choice2 + 2) % 7 == p0Choice2 || (p1Choice2 + 3) % 7 == p0Choice2 ) {
+            p1Point += 2;  
+        }
+        else {
+            p0Point++;
+            p1Point++;
+        }
+        if( p0Point > p1Point ){
+            account0.transfer( reward );
+        }
+        else if( p1Point > p0Point ){
+            account1.transfer( reward );
+        }
+        else{
             account0.transfer(reward / 2);
             account1.transfer(reward / 2);
         }
@@ -102,10 +128,12 @@ contract RWAPSSF is CommitReveal {
         numInput = 0;
         numHashedInput = 0;
         
-        player[0].choice = 7;
+        player[0].choice1 = 7;
+        player[0].choice2 = 7;
         player[0].addr = address(0);
 
-        player[1].choice = 7;
+        player[1].choice1 = 7;
+        player[1].choice2 = 7;
         player[1].addr = address(0);
     }
 
